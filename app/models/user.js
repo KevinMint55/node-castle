@@ -26,6 +26,10 @@ let UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
+    avatar: {
+        type: String,
+        default: 'default.png'
+    },
 }, {
     versionKey: false
 })
@@ -81,7 +85,7 @@ UserSchema.statics = {
     findById(id, cb) {
         return this.findOne({
             _id: id
-        }).select('nickname username').exec(cb);
+        }).select('nickname username avatar').exec(cb);
     }
 }
 

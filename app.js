@@ -9,6 +9,10 @@ const config = require('./config');
 // 创建一个Koa对象表示web app本身
 const app = new Koa();
 
+// 静态资源
+const path = require('path');
+const static = require('koa-static');
+
 // 连接数据库
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -31,9 +35,13 @@ app.use(logger());
 const onerror = require('koa-onerror');
 onerror(app);
 
+// 获取静态资源
+app.use(static(path.join(__dirname)));
+
 // 允许跨域
 app.use(async(ctx, next) => {
     ctx.set('Access-Control-Allow-Origin', '*');
+    ctx.set('Access-Control-Allow-Methods', '*');
     ctx.set('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
     await next();
 });
@@ -51,11 +59,14 @@ app.use(jwtKoa({
     secret: config.secret
 }).unless({
     path: [/^\/api\/user\/login/, /^\/api\/user\/register/]
-}))
+}));
 
 // body报表解析
 app.use(koaBody({
-    multipart: true
+    multipart: true,
+    formLimit:"5mb",
+    jsonLimit:"5mb",
+    textLimit:"5mb",
 }));
 
 // 添加接口表

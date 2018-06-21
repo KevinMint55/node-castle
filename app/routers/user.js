@@ -11,6 +11,31 @@ const config = require('../../config');
 // 加密算法
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 10;
+const koaBody = require('koa-body');
+
+// 图片上传
+const fs = require('fs');
+const path = require('path');
+async function upload(ctx, next) {
+    const tmpdir = './assets/';
+    const files = ctx.request.files || {};
+    let data = {};
+
+    for (let key in files) {
+        const file = files[key];
+        const filename = `${Date.now()}${file.name}`
+        const filePath = path.join(tmpdir, filename);
+        const reader = fs.createReadStream(file.path);
+        const writer = fs.createWriteStream(filePath);
+        reader.pipe(writer);
+        data[key] = {
+            originalname: file.name,
+            filename,
+            filePath
+        }
+    }
+    return data;
+}
 
 router
     // 用户登录
@@ -91,9 +116,33 @@ router
     })
     // 根据id修改用户信息
     .put('/', async (ctx, next) => {
+        if (ctx.request.files.file) {
+            let user = await User.findById(ctx.userinfo._id);
+            // 上传新头像并删除原头像
+            let oldAvatar = user.avatar;
+            let files = await upload(ctx);
+            await new Promise(resolve => {
+                User.findOneAndUpdate({
+                    _id: ctx.userinfo._id
+                }, {
+                    $set: {
+                        avatar: files.file.filename
+                    }
+                }, (err, res) => {
+                    if (oldAvatar != 'default.jpg') {
+                        fs.unlink(`./assets/${oldAvatar}`, (err) => {
+                            if (err) {
+                                console.log('deleteError', err);
+                            }
+                        });
+                    }
+                    resolve();
+                })
+            })
+        }
         await new Promise(resolve => {
             User.findOneAndUpdate({
-                _id: ctx.request.body.id
+                _id: ctx.userinfo._id
             }, {
                 $set: {
                     nickname: ctx.request.body.nickname || ''
@@ -102,7 +151,7 @@ router
                 resolve();
             })
         })
-        let data = await User.findById(ctx.request.body.id);
+        let data = await User.findById(ctx.userinfo._id);
         data = data.toObject();
         data.token = ctx.token;
         response(ctx, data);
