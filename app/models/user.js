@@ -20,11 +20,11 @@ let UserSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
     updatedAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
     avatar: {
         type: String,
@@ -54,12 +54,6 @@ UserSchema.options.toObject.transform = (doc, ret, options) => {
 
 // 设置保存前处理
 UserSchema.pre('save', function(next) {
-    if (this.isNew) {
-        this.createdAt = this.updatedAt = Date.now();
-    } else {
-        this.updatedAt = Date.now();
-    }
-
     // 密码加密
     bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
         if (err) return next(err);

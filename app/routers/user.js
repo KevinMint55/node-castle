@@ -11,7 +11,6 @@ const config = require('../../config');
 // 加密算法
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 10;
-const koaBody = require('koa-body');
 
 // 图片上传
 const fs = require('fs');
@@ -145,13 +144,15 @@ router
                 _id: ctx.userinfo._id
             }, {
                 $set: {
-                    nickname: ctx.request.body.nickname || ''
+                    nickname: ctx.request.body.nickname || '',
+                    updatedAt: Date.now(),
                 }
             }, (err, res) => {
                 resolve();
             })
         })
         let data = await User.findById(ctx.userinfo._id);
+        console.log(data);
         data = data.toObject();
         data.token = ctx.token;
         response(ctx, data);
@@ -192,4 +193,4 @@ router
         }
     })
 
-module.exports = router
+module.exports = router;

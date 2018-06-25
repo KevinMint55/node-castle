@@ -71,6 +71,7 @@ app.use(koaBody({
 
 // 添加接口表
 app.use(require('./app/routers/user').routes())
+    .use(require('./app/routers/group').routes())
 
 // socket连接
 const server = require('http').Server(app.callback());

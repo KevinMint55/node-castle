@@ -17,6 +17,7 @@
 		"koa-static": "^5.0.0",
 		"moment": "^2.22.2",
 		"mongoose": "^5.1.6",
+		"node-uuid": "^1.4.8",
 		"nodemailer": "^4.6.7",
 		"socket.io": "^2.1.1"
 	},
