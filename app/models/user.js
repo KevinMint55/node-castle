@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 // 加密算法
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 10;
@@ -30,6 +31,12 @@ let UserSchema = new mongoose.Schema({
         type: String,
         default: 'default.png'
     },
+    groups: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Group'
+        },
+    ],
 }, {
     versionKey: false
 })
