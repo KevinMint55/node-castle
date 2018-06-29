@@ -21,6 +21,34 @@ function addProject(groupId, projectId) {
     })
 }
 
+function removeProject(groupId, projectId) {
+    return new Promise(resolve => {
+        Group.findOneAndUpdate({
+            _id: groupId
+        }, {
+            $pull: {
+                projects: projectId
+            }
+        }, (err, res) => {
+            resolve();
+        })
+    })
+}
+
+function upgradeProject(projectId, name) {
+    return new Promise(resolve => {
+        Project.findOneAndUpdate({
+            _id: projectId
+        }, {
+            $set: {
+                name
+            }
+        }, (err, res) => {
+            resolve();
+        })
+    })
+}
+
 router
     // 创建项目
     .post('/', async (ctx, next) => {
@@ -37,6 +65,38 @@ router
         const project = new Project(data);
         const projectInfo = await project.save();
         addProject(ctx.request.body.groupId, projectInfo._id);
+        response(ctx);
+    })
+    // 删除团队
+    .del('/', async(ctx, next) => {
+        let project = await Project.findOne({
+            _id: ctx.request.query.projectId
+        }, (err) => {
+            if (err) {
+                console.log("error:" + err)
+            }
+        })
+        if (project) {
+            if (ctx.userinfo._id != project.users[0].userId) {
+                response(ctx, null, 201, '您无操作权限');
+            } else {
+                await Project.remove({
+                    _id: ctx.request.query.projectId
+                }, (err, res) => {
+                    if (err) {
+                        console.log('error:', err);
+                    }
+                })
+                removeProject(ctx.request.query.groupId, ctx.request.query.projectId);
+                response(ctx);
+            }
+        } else {
+            response(ctx, null, 202, '不存在该资源');
+        }
+    })
+    // 修改项目名
+    .put('/', async(ctx, next) => {
+        upgradeProject(ctx.request.body.id, ctx.request.body.name);
         response(ctx);
     })
 

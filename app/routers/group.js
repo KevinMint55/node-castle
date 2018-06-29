@@ -77,6 +77,7 @@ router
             _id: ctx.userinfo._id
         }).populate({
             path: 'groups',
+            populate: { path: 'projects' },
         }).exec();
         if (user.groups) {
             response(ctx, user.groups);
