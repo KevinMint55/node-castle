@@ -13,9 +13,9 @@ let ViewSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    TableId: {
+    table: {
         type: Schema.Types.ObjectId,
-        ref: 'Project',
+        ref: 'Table',
     },
     data: Schema.Types.Mixed,
 }, {

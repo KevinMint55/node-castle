@@ -17,7 +17,9 @@ let TableSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Project',
     },
-    columns: Array,
+    columns: {
+        type: Array,
+    },
     views: [
         {
             type: Schema.Types.ObjectId,

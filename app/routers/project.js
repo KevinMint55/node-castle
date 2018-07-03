@@ -67,7 +67,7 @@ router
         addProject(ctx.request.body.groupId, projectInfo._id);
         response(ctx);
     })
-    // 删除团队
+    // 删除项目
     .del('/', async(ctx, next) => {
         let project = await Project.findOne({
             _id: ctx.request.query.projectId

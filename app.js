@@ -73,6 +73,8 @@ app.use(koaBody({
 app.use(require('./app/routers/user').routes())
     .use(require('./app/routers/group').routes())
     .use(require('./app/routers/project').routes())
+    .use(require('./app/routers/table').routes())
+    .use(require('./app/routers/view').routes())
 
 // socket连接
 const server = require('http').Server(app.callback());
