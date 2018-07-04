@@ -15,7 +15,7 @@ let ProjectSchema = new mongoose.Schema({
     },
     users: [
         {
-            userId: {
+            user: {
                 type: Schema.Types.ObjectId,
                 ref: 'User',
             },

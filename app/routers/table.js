@@ -80,9 +80,10 @@ router
             name: ctx.request.body.name,
             creator: ctx.userinfo._id,
             users: [{
-                userId: ctx.userinfo._id,
+                user: ctx.userinfo._id,
                 type: 'creator',
             }],
+            projectId: ctx.request.body.projectId,
             columns: [{
                     type: 'selection',
                     width: 40,

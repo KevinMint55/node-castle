@@ -84,6 +84,9 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
     socket.handshake.query.userId;
+    socket.on('updateView', (vId) => {
+        io.emit('updateView', vId);
+    })
 });
 
 // 在端口config.port监听

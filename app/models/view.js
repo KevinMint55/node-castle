@@ -13,6 +13,10 @@ let ViewSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    projectId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Project',
+    },
     table: {
         type: Schema.Types.ObjectId,
         ref: 'Table',

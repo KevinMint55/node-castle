@@ -3,8 +3,10 @@ let router = new Router({
     prefix: '/api/projects'
 });
 
-const Project = require('../models/project');
 const Group = require('../models/group');
+const Project = require('../models/project');
+const Table = require('../models/table');
+const View = require('../models/view');
 const response = require('../utils/response');
 
 function addProject(groupId, projectId) {
@@ -57,7 +59,7 @@ router
             creator: ctx.userinfo._id,
             users: [
                 {
-                    userId: ctx.userinfo._id,
+                    user: ctx.userinfo._id,
                     type: 'creator',
                 },
             ],
@@ -77,7 +79,7 @@ router
             }
         })
         if (project) {
-            if (ctx.userinfo._id != project.users[0].userId) {
+            if (ctx.userinfo._id != project.users[0].user) {
                 response(ctx, null, 201, '您无操作权限');
             } else {
                 await Project.remove({
@@ -88,6 +90,12 @@ router
                     }
                 })
                 removeProject(ctx.request.query.groupId, ctx.request.query.projectId);
+                await Table.remove({
+                    projectId: ctx.request.query.projectId,
+                })
+                await View.remove({
+                    projectId: ctx.request.query.projectId,
+                })
                 response(ctx);
             }
         } else {

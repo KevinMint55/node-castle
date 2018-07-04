@@ -13,7 +13,7 @@ let TableSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    ProjectId: {
+    projectId: {
         type: Schema.Types.ObjectId,
         ref: 'Project',
     },

@@ -4,6 +4,9 @@ let router = new Router({
 });
 
 const Group = require('../models/group');
+const Project = require('../models/project');
+const Table = require('../models/table');
+const View = require('../models/view');
 const User = require('../models/user');
 const response = require('../utils/response');
 
@@ -61,7 +64,7 @@ router
             creator: ctx.userinfo._id,
             users: [
                 {
-                    userId: ctx.userinfo._id,
+                    user: ctx.userinfo._id,
                     type: 'creator',
                 },
             ],
@@ -95,7 +98,7 @@ router
             }
         })
         if (group) {
-            if (ctx.userinfo._id != group.users[0].userId) {
+            if (ctx.userinfo._id != group.users[0].user) {
                 response(ctx, null, 201, '您无操作权限');
             } else {
                 await Group.remove({
@@ -107,6 +110,21 @@ router
                 })
                 removeGroup(ctx.userinfo._id, ctx.request.query.id);
                 response(ctx);
+                await Project.remove({
+                    _id: {
+                        $in: group.projects
+                    }
+                })
+                await Table.remove({
+                    projectId: {
+                        $in: group.projects
+                    }
+                })
+                await View.remove({
+                    projectId: {
+                        $in: group.projects
+                    }
+                })
             }
         } else {
             response(ctx, null, 202, '不存在该资源');
@@ -116,6 +134,19 @@ router
     .put('/', async(ctx, next) => {
         upgradeGroup(ctx.request.body.id, ctx.request.body.name);
         response(ctx);
+    })
+    // 获取团队详情
+    .get('/details', async(ctx, next) => {
+        let group = await Group.findOne({
+            _id: ctx.request.query.groupId
+        }).populate({
+            path: 'users.user',
+        }).exec();
+        if (group) {
+            response(ctx, group);
+        } else {
+            response(ctx, null, 201, '不存在该团队');
+        }
     })
 
 module.exports = router;
