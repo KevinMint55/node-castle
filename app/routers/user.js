@@ -100,7 +100,7 @@ router
                 console.log("error:" + err)
             }
         })
-        if(exist) {
+        if (exist) {
             await User.remove({
                 _id: ctx.request.query.id
             }, (err, res) => {
@@ -128,7 +128,7 @@ router
                         avatar: files.file.filename
                     }
                 }, (err, res) => {
-                    if (oldAvatar != 'default.jpg') {
+                    if (oldAvatar != 'default.png') {
                         fs.unlink(`./assets/${oldAvatar}`, (err) => {
                             if (err) {
                                 console.log('deleteError', err);
