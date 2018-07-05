@@ -52,6 +52,36 @@ function upgradeGroup(groupId, name) {
     })
 }
 
+function addUser(groupId, user) {
+    return new Promise(resolve => {
+        Group.findOneAndUpdate({
+            _id: groupId
+        }, {
+            $push: {
+                users: user
+            }
+        }, (err, res) => {
+            resolve();
+        })
+    })
+}
+
+function removeUser(groupId, userId) {
+    return new Promise(resolve => {
+        Group.findOneAndUpdate({
+            _id: groupId
+        }, {
+            $pull: {
+                users: {
+                    user: userId
+                }
+            }
+        }, (err, res) => {
+            resolve();
+        })
+    })
+}
+
 router
     // 创建团队
     .post('/', async(ctx, next) => {
@@ -146,6 +176,44 @@ router
             response(ctx, group);
         } else {
             response(ctx, null, 201, '不存在该团队');
+        }
+    })
+    // 邀请加入团队
+    .post('/invite', async(ctx, next) => {
+        let user = await User.findOne({
+            username: ctx.request.body.username
+        }).exec();
+        if (user) {
+            if (user.groups.some(item => item == ctx.request.body.groupId)) {
+                response(ctx, null, 202, '该用户已在团队中');
+            } else {
+                addGroup(user._id, ctx.request.body.groupId);
+                let userObj = {
+                    user: user._id,
+                    type: 'member',
+                }
+                addUser(ctx.request.body.groupId, userObj);
+                response(ctx);
+            }
+        } else {
+            response(ctx, null, 201, '不存在该用户');
+        }
+    })
+    // 离开团队
+    .del('/leave', async(ctx, next) => {
+        let group = await Group.findOne({
+            _id: ctx.request.query.id
+        }, (err) => {
+            if (err) {
+                console.log("error:" + err)
+            }
+        })
+        if (group) {
+            removeGroup(ctx.userinfo._id, ctx.request.query.id);
+            removeUser(ctx.request.query.id, ctx.userinfo._id);
+            response(ctx);
+        } else {
+            response(ctx, null, 202, '不存在该资源');
         }
     })
 

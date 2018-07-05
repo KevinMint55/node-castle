@@ -83,9 +83,20 @@ const io = require('socket.io')(server, {
 });
 
 io.on('connection', (socket) => {
-    socket.handshake.query.userId;
-    socket.on('updateView', (vId) => {
-        io.emit('updateView', vId);
+    socket.on('updateView', (vId, data) => {
+        io.emit('updateView', vId, data);
+    })
+    socket.on('addViewItem', (vId, obj) => {
+        io.emit('addViewItem', vId, obj, socket.handshake.query.userId);
+    })
+    socket.on('removeViewItem', (vId, ids) => {
+        io.emit('removeViewItem', vId, ids, socket.handshake.query.userId);
+    })
+    socket.on('updateColumns', (vId) => {
+        io.emit('updateColumns', vId);
+    })
+    socket.on('updateProject', (pId) => {
+        io.emit('updateProject', pId);
     })
 });
 

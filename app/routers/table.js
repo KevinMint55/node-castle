@@ -57,6 +57,20 @@ function upgradeTable(tableId, name) {
     })
 }
 
+function updateTableColumns(tableId, columns) {
+    return new Promise(resolve => {
+        Table.findOneAndUpdate({
+            _id: tableId
+        }, {
+            $set: {
+                columns
+            }
+        }, (err, res) => {
+            resolve();
+        })
+    })
+}
+
 router
     // 获取表格列表
     .get('/', async (ctx, next) => {
@@ -92,6 +106,7 @@ router
                 {
                     title: '标题',
                     key: gUuid(),
+                    type: 'text',
                 },
                 {
                     title: '日期',
@@ -169,6 +184,54 @@ router
     .put('/', async (ctx, next) => {
         upgradeTable(ctx.request.body.id, ctx.request.body.name);
         response(ctx);
+    })
+    // 获取表格详情
+    .get('/details', async (ctx, next) => {
+        let table = await Table.findOne({
+            _id: ctx.request.query.id
+        }).exec();
+        if (table) {
+            table.columns.splice(0, 1);
+            response(ctx, table);
+        } else {
+            response(ctx, null, 201, '不存在该表格');
+        }
+    })
+    // 编辑表头
+    .post('/columns', async (ctx, next) => {
+        let table = await Table.findOne({
+            _id: ctx.request.body.id
+        }).exec();
+        if (table) {
+            ctx.request.body.columns.unshift({
+                type: 'selection',
+                width: 40,
+                fixed: true,
+            });
+            ctx.request.body.columns.forEach(e => {
+                if (!e.key) {
+                    e.key = gUuid();
+                }
+            });
+            updateTableColumns(ctx.request.body.id, ctx.request.body.columns)
+            response(ctx);
+        } else {
+            response(ctx, null, 201, '不存在该表格');
+        }
+    })
+    // 表格复制
+    .post('/copy', async (ctx, next) => {
+        let table = await Table.findOne({
+            _id: ctx.request.body.tableId
+        }).populate({
+            path: 'views',
+        }).exec();
+        if (table) {
+            console.log(table);
+            response(ctx);
+        } else {
+            response(ctx, null, 201, '不存在该表格');
+        }
     })
 
 module.exports = router;

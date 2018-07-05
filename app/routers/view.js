@@ -56,38 +56,6 @@ function upgradeView(viewId, name) {
     })
 }
 
-// function addViewItem(viewId, obj) {
-//     return new Promise(resolve => {
-//         View.findOneAndUpdate({
-//             _id: viewId
-//         }, {
-//             $push: {
-//                 data: obj,
-//             }
-//         }, (err, res) => {
-//             resolve();
-//         })
-//     })
-// }
-
-// function removeViewItem(viewId, ids) {
-//     return new Promise(resolve => {
-//         View.findOneAndUpdate({
-//             _id: viewId
-//         }, {
-//             $pull: {
-//                 data: {
-//                     id: {
-//                         $in: ids
-//                     }
-//                 },
-//             }
-//         }, (err, res) => {
-//             resolve();
-//         })
-//     })
-// }
-
 function updateViewData(viewId, data) {
     return new Promise(resolve => {
         View.findOneAndUpdate({
