@@ -16,7 +16,8 @@ const SALT_WORK_FACTOR = 10;
 const fs = require('fs');
 const path = require('path');
 async function upload(ctx, next) {
-    const tmpdir = './assets/';
+    // const tmpdir = './assets/';
+    const tmpdir = '../asset-server/assets/';
     const files = ctx.request.files || {};
     let data = {};
 
@@ -129,7 +130,7 @@ router
                     }
                 }, (err, res) => {
                     if (oldAvatar != 'default.png') {
-                        fs.unlink(`./assets/${oldAvatar}`, (err) => {
+                        fs.unlink(`../asset-server/assets/${oldAvatar}`, (err) => {
                             if (err) {
                                 console.log('deleteError', err);
                             }
