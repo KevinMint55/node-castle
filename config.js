@@ -3,7 +3,7 @@ module.exports = {
     database: {
         USER: 'castle',
         PASSWORD: '3228262',
-        URL: 'localhost:27017/castle'
+        URL: '111.231.249.239:27017/castle'
     },
     secret: 'castle',
     email: {
