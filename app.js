@@ -89,8 +89,8 @@ io.on('connection', (socket) => {
     socket.on('addViewItem', (vId, obj) => {
         io.emit('addViewItem', vId, obj, socket.handshake.query.userId);
     })
-    socket.on('removeViewItem', (vId, ids) => {
-        io.emit('removeViewItem', vId, ids, socket.handshake.query.userId);
+    socket.on('removeViewItem', (vId, key, ids) => {
+        io.emit('removeViewItem', vId, key, ids, socket.handshake.query.userId);
     })
     socket.on('updateColumns', (vId) => {
         io.emit('updateColumns', vId);

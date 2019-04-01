@@ -21,7 +21,9 @@ let ViewSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Table',
     },
-    data: Schema.Types.Mixed,
+    data: {
+        type: Array,
+    },
 }, {
     versionKey: false
 })
