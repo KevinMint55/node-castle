@@ -3,16 +3,9 @@ let router = new Router({
     prefix: '/api/views'
 });
 
-const uuid = require('node-uuid');
 const View = require('../models/view');
 const Table = require('../models/table');
 const response = require('../utils/response');
-
-function gUuid() {
-    let uid = uuid.v4();
-    uid = uid.replace(/\-/g, '');
-    return uid;
-}
 
 function addView(tableId, viewId) {
     return new Promise(resolve => {
