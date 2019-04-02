@@ -10,5 +10,11 @@ module.exports = {
         usrname: 'kevinmint',
         user: 'kevinmint@foxmail.com',
         pass: 'viaeaphpdnjnbcaj',
-    }
+    },
+    assetsDir: './assets/',
+    qiniu: {
+        accessKey: 'RnF6n3LUR9SgbIaBosNt9eMUzglsxeKP-FByM_SX',
+        secretKey: '-hiwY0OJZPQu2HXY62sGCvW6CegYeMkV885O6dml',
+        scope: 'myserver',
+    },
 }

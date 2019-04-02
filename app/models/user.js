@@ -29,7 +29,7 @@ let UserSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: 'default.png'
+        default: 'castle/default.png'
     },
     groups: [
         {

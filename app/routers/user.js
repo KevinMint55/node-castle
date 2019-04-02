@@ -12,30 +12,7 @@ const config = require('../../config');
 const bcrypt = require('bcryptjs');
 const SALT_WORK_FACTOR = 10;
 
-// 图片上传
-const fs = require('fs');
-const path = require('path');
-async function upload(ctx, next) {
-    // const tmpdir = './assets/';
-    const tmpdir = '../asset-server/assets/';
-    const files = ctx.request.files || {};
-    let data = {};
-
-    for (let key in files) {
-        const file = files[key];
-        const filename = `${Date.now()}${file.name}`
-        const filePath = path.join(tmpdir, filename);
-        const reader = fs.createReadStream(file.path);
-        const writer = fs.createWriteStream(filePath);
-        reader.pipe(writer);
-        data[key] = {
-            originalname: file.name,
-            filename,
-            filePath
-        }
-    }
-    return data;
-}
+const Upload = require('../utils/upload.js');
 
 router
     // 用户登录
@@ -117,24 +94,23 @@ router
     // 根据id修改用户信息
     .put('/', async (ctx, next) => {
         if (ctx.request.files.file) {
-            let user = await User.findById(ctx.userinfo._id);
+            const user = await User.findById(ctx.userinfo._id);
             // 上传新头像并删除原头像
-            let oldAvatar = user.avatar;
-            let files = await upload(ctx);
+            const oldAvatar = user.avatar;
+            const data = await Upload.upToLocal(ctx.request.files);
+            const qiniu = await Upload.upToQiniu(data.file.filePath, `castle/${ctx.userinfo._id}_${data.file.filename}`);
+            Upload.removeImage(data.file.filePath);
             await new Promise(resolve => {
                 User.findOneAndUpdate({
                     _id: ctx.userinfo._id
                 }, {
                     $set: {
-                        avatar: files.file.filename
+                        avatar: qiniu.key
                     }
-                }, (err, res) => {
-                    if (oldAvatar != 'default.png') {
-                        fs.unlink(`../asset-server/assets/${oldAvatar}`, (err) => {
-                            if (err) {
-                                console.log('deleteError', err);
-                            }
-                        });
+                }, async (err, res) => {
+                    if (oldAvatar !== 'castle/default.png') {
+                        const imagesInfo = await Upload.getQiniuImageList(oldAvatar);
+                        await Upload.removeQiniuImageList(imagesInfo.items);
                     }
                     resolve();
                 })
@@ -153,7 +129,6 @@ router
             })
         })
         let data = await User.findById(ctx.userinfo._id);
-        console.log(data);
         data = data.toObject();
         data.token = ctx.token;
         response(ctx, data);
