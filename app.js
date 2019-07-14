@@ -84,7 +84,7 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
     socket.on('updateView', (vId, data) => {
-        io.emit('updateView', vId, data);
+        io.emit('updateView', vId, data, socket.handshake.query.userId);
     })
     socket.on('addViewItem', (vId, obj) => {
         io.emit('addViewItem', vId, obj, socket.handshake.query.userId);
