@@ -6,11 +6,6 @@ module.exports = {
         URL: '111.231.249.239:27017/castle'
     },
     secret: 'castle',
-    email: {
-        usrname: 'kevinmint',
-        user: 'kevinmint@foxmail.com',
-        pass: 'viaeaphpdnjnbcaj',
-    },
     assetsDir: './assets/',
     qiniu: {
         accessKey: 'RnF6n3LUR9SgbIaBosNt9eMUzglsxeKP-FByM_SX',
