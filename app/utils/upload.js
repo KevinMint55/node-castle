@@ -13,7 +13,7 @@ const qiniu = require('qiniu');
 
 function gUuid() {
     let uid = uuidv1();
-    uid = uid.replace(/\-/g, '');
+    uid = uid.replace(/-/g, '');
     return uid;
 }
 
