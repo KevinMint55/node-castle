@@ -16,6 +16,7 @@ const koaStatic = require('koa-static');
 // 连接数据库
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+mongoose.set('useCreateIndex', true);
 mongoose.connect(`mongodb://${config.database.USER}:${config.database.PASSWORD}@${config.database.URL}`, {
     useNewUrlParser: true
 });
