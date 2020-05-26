@@ -15,7 +15,7 @@ function addView(tableId, viewId) {
             $push: {
                 views: viewId
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -29,7 +29,7 @@ function removeView(tableId, viewId) {
             $pull: {
                 views: viewId
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -43,7 +43,7 @@ function upgradeView(viewId, name) {
             $set: {
                 name
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -57,7 +57,7 @@ function updateViewData(viewId, data) {
             $set: {
                 data
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -65,7 +65,7 @@ function updateViewData(viewId, data) {
 
 router
     // 获取视图
-    .get('/', async (ctx, next) => {
+    .get('/', async (ctx) => {
         let view = await View.findOne({
             _id: ctx.request.query.viewId
         }).populate({
@@ -78,7 +78,7 @@ router
         }
     })
     // 创建视图
-    .post('/', async (ctx, next) => {
+    .post('/', async (ctx) => {
         let table = await Table.findOne({
             _id: ctx.request.body.tableId
         }, (err) => {
@@ -103,7 +103,7 @@ router
         }
     })
     // 删除视图
-    .del('/', async(ctx, next) => {
+    .del('/', async (ctx) => {
         let view = await View.findOne({
             _id: ctx.request.query.viewId
         }, (err) => {
@@ -114,7 +114,7 @@ router
         if (view) {
             await View.remove({
                 _id: ctx.request.query.viewId
-            }, (err, res) => {
+            }, (err) => {
                 if (err) {
                     console.log('error:', err);
                 }
@@ -126,12 +126,12 @@ router
         }
     })
     // 修改视图名
-    .put('/', async(ctx, next) => {
+    .put('/', async (ctx) => {
         upgradeView(ctx.request.body.id, ctx.request.body.name);
         response(ctx);
     })
     // 更新视图数据
-    .post('/data', async(ctx, next) => {
+    .post('/data', async (ctx) => {
         if (ctx.request.body.content) {
             updateViewData(ctx.request.body.viewId, ctx.request.body.content);
         }

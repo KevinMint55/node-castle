@@ -11,12 +11,14 @@ const app = new Koa();
 
 // 静态资源
 const path = require('path');
-const static = require('koa-static');
+const koaStatic = require('koa-static');
 
 // 连接数据库
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://${config.database.USER}:${config.database.PASSWORD}@${config.database.URL}`, { useNewUrlParser: true });
+mongoose.connect(`mongodb://${config.database.USER}:${config.database.PASSWORD}@${config.database.URL}`, {
+    useNewUrlParser: true
+});
 mongoose.connection.on('connected', () => {
     console.log('Mongoose connection open to ' + `${config.database.URL}`);
 });
@@ -36,10 +38,10 @@ const onerror = require('koa-onerror');
 onerror(app);
 
 // 获取静态资源
-app.use(static(path.join(__dirname)));
+app.use(koaStatic(path.join(__dirname)));
 
 // 允许跨域
-app.use(async(ctx, next) => {
+app.use(async (ctx, next) => {
     ctx.set('Access-Control-Allow-Origin', '*');
     ctx.set('Access-Control-Allow-Methods', '*');
     ctx.set('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
@@ -64,9 +66,9 @@ app.use(jwtKoa({
 // body报表解析
 app.use(koaBody({
     multipart: true,
-    formLimit:"5mb",
-    jsonLimit:"5mb",
-    textLimit:"5mb",
+    formLimit: "5mb",
+    jsonLimit: "5mb",
+    textLimit: "5mb",
 }));
 
 // 添加接口表

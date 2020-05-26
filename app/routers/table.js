@@ -23,7 +23,7 @@ function addTable(projectId, tableId) {
             $push: {
                 tables: tableId
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -37,7 +37,7 @@ function removeTable(projectId, tableId) {
             $pull: {
                 tables: tableId
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -51,7 +51,7 @@ function upgradeTable(tableId, name) {
             $set: {
                 name
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -65,7 +65,7 @@ function updateTableColumns(tableId, columns) {
             $set: {
                 columns
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -73,7 +73,7 @@ function updateTableColumns(tableId, columns) {
 
 router
     // 获取表格列表
-    .get('/', async (ctx, next) => {
+    .get('/', async (ctx) => {
         let project = await Project.findOne({
             _id: ctx.request.query.projectId
         }).populate({
@@ -89,7 +89,7 @@ router
         }
     })
     // 创建表格
-    .post('/', async (ctx, next) => {
+    .post('/', async (ctx) => {
         const data = {
             name: ctx.request.body.name,
             creator: ctx.userinfo._id,
@@ -149,7 +149,7 @@ router
         response(ctx);
     })
     // 删除表格
-    .del('/', async (ctx, next) => {
+    .del('/', async (ctx) => {
         let table = await Table.findOne({
             _id: ctx.request.query.tableId
         }, (err) => {
@@ -160,7 +160,7 @@ router
         if (table) {
             await Table.remove({
                 _id: ctx.request.query.tableId
-            }, (err, res) => {
+            }, (err) => {
                 if (err) {
                     console.log('error:', err);
                 }
@@ -170,7 +170,7 @@ router
                 _id: {
                     $in: table.views
                 }
-            }, (err, res) => {
+            }, (err) => {
                 if (err) {
                     console.log('error:', err);
                 }
@@ -181,12 +181,12 @@ router
         }
     })
     // 修改表格名
-    .put('/', async (ctx, next) => {
+    .put('/', async (ctx) => {
         upgradeTable(ctx.request.body.id, ctx.request.body.name);
         response(ctx);
     })
     // 获取表格详情
-    .get('/details', async (ctx, next) => {
+    .get('/details', async (ctx) => {
         let table = await Table.findOne({
             _id: ctx.request.query.id
         }).exec();
@@ -198,7 +198,7 @@ router
         }
     })
     // 编辑表头
-    .post('/columns', async (ctx, next) => {
+    .post('/columns', async (ctx) => {
         let table = await Table.findOne({
             _id: ctx.request.body.id
         }).exec();
@@ -220,7 +220,7 @@ router
         }
     })
     // 表格复制
-    .post('/copy', async (ctx, next) => {
+    .post('/copy', async (ctx) => {
         let table = await Table.findOne({
             _id: ctx.request.body.tableId
         }).populate({

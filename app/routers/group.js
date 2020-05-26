@@ -18,7 +18,7 @@ function addGroup(userId, groupId) {
             $push: {
                 groups: groupId
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -32,7 +32,7 @@ function removeGroup(userId, groupId) {
             $pull: {
                 groups: groupId
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -46,7 +46,7 @@ function upgradeGroup(groupId, name) {
             $set: {
                 name
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -60,7 +60,7 @@ function addUser(groupId, user) {
             $push: {
                 users: user
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -76,7 +76,7 @@ function removeUser(groupId, userId) {
                     user: userId
                 }
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -84,7 +84,7 @@ function removeUser(groupId, userId) {
 
 router
     // 创建团队
-    .post('/', async(ctx, next) => {
+    .post('/', async (ctx) => {
         if (!ctx.request.body.name) {
             response(ctx, null, 201, '请输入团队名');
             return;
@@ -105,12 +105,14 @@ router
         response(ctx);
     })
     // 获取团队列表
-    .get('/', async(ctx, next) => {
+    .get('/', async (ctx) => {
         let user = await User.findOne({
             _id: ctx.userinfo._id
         }).populate({
             path: 'groups',
-            populate: { path: 'projects' },
+            populate: {
+                path: 'projects'
+            },
         }).exec();
         if (user.groups) {
             response(ctx, user.groups);
@@ -119,7 +121,7 @@ router
         }
     })
     // 删除团队
-    .del('/', async(ctx, next) => {
+    .del('/', async (ctx) => {
         let group = await Group.findOne({
             _id: ctx.request.query.id
         }, (err) => {
@@ -133,7 +135,7 @@ router
             } else {
                 await Group.remove({
                     _id: ctx.request.query.id
-                }, (err, res) => {
+                }, (err) => {
                     if (err) {
                         console.log('error:', err);
                     }
@@ -161,12 +163,12 @@ router
         }
     })
     // 修改团队名
-    .put('/', async(ctx, next) => {
+    .put('/', async (ctx) => {
         upgradeGroup(ctx.request.body.id, ctx.request.body.name);
         response(ctx);
     })
     // 获取团队详情
-    .get('/details', async(ctx, next) => {
+    .get('/details', async (ctx) => {
         let group = await Group.findOne({
             _id: ctx.request.query.groupId
         }).populate({
@@ -179,7 +181,7 @@ router
         }
     })
     // 邀请加入团队
-    .post('/invite', async(ctx, next) => {
+    .post('/invite', async (ctx) => {
         let user = await User.findOne({
             username: ctx.request.body.username
         }).exec();
@@ -200,7 +202,7 @@ router
         }
     })
     // 离开团队
-    .del('/leave', async(ctx, next) => {
+    .del('/leave', async (ctx) => {
         let group = await Group.findOne({
             _id: ctx.request.query.id
         }, (err) => {

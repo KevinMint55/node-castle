@@ -17,7 +17,7 @@ function addProject(groupId, projectId) {
             $push: {
                 projects: projectId
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -31,7 +31,7 @@ function removeProject(groupId, projectId) {
             $pull: {
                 projects: projectId
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -45,7 +45,7 @@ function upgradeProject(projectId, name) {
             $set: {
                 name
             }
-        }, (err, res) => {
+        }, () => {
             resolve();
         })
     })
@@ -53,7 +53,7 @@ function upgradeProject(projectId, name) {
 
 router
     // 创建项目
-    .post('/', async (ctx, next) => {
+    .post('/', async (ctx) => {
         const data = {
             name: ctx.request.body.name,
             creator: ctx.userinfo._id,
@@ -70,7 +70,7 @@ router
         response(ctx);
     })
     // 删除项目
-    .del('/', async(ctx, next) => {
+    .del('/', async (ctx) => {
         let project = await Project.findOne({
             _id: ctx.request.query.projectId
         }, (err) => {
@@ -84,7 +84,7 @@ router
             } else {
                 await Project.remove({
                     _id: ctx.request.query.projectId
-                }, (err, res) => {
+                }, (err) => {
                     if (err) {
                         console.log('error:', err);
                     }
@@ -103,7 +103,7 @@ router
         }
     })
     // 修改项目名
-    .put('/', async(ctx, next) => {
+    .put('/', async (ctx) => {
         upgradeProject(ctx.request.body.id, ctx.request.body.name);
         response(ctx);
     })

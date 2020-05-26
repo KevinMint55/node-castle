@@ -16,7 +16,7 @@ const Upload = require('../utils/upload.js');
 
 router
     // 用户登录
-    .post('/login', async (ctx, next) => {
+    .post('/login', async (ctx) => {
         let username = ctx.request.body.username || '',
             password = ctx.request.body.password || '';
 
@@ -41,7 +41,7 @@ router
         }
     })
     // 添加新用户
-    .post('/register', async (ctx, next) => {
+    .post('/register', async (ctx) => {
         let data = {
             username: ctx.request.body.username || '',
             nickname: ctx.request.body.username || '',
@@ -49,7 +49,7 @@ router
         }
         let exist = await User.findOne({
             username: data.username
-        }, (err, user) => {
+        }, (err) => {
             if (err) {
                 console.log("error:" + err)
             }
@@ -70,10 +70,10 @@ router
         }
     })
     // 根据id移除用户信息
-    .del('/', async (ctx, next) => {
+    .del('/', async (ctx) => {
         let exist = await User.findOne({
             _id: ctx.request.query.id
-        }, (err, user) => {
+        }, (err) => {
             if (err) {
                 console.log("error:" + err)
             }
@@ -81,7 +81,7 @@ router
         if (exist) {
             await User.remove({
                 _id: ctx.request.query.id
-            }, (err, res) => {
+            }, (err) => {
                 if (err) {
                     console.log('error:', err);
                 }
@@ -92,7 +92,7 @@ router
         }
     })
     // 根据id修改用户信息
-    .put('/', async (ctx, next) => {
+    .put('/', async (ctx) => {
         if (ctx.request.files.file) {
             const user = await User.findById(ctx.userinfo._id);
             // 上传新头像并删除原头像
@@ -107,7 +107,7 @@ router
                     $set: {
                         avatar: qiniu.key
                     }
-                }, async (err, res) => {
+                }, async () => {
                     if (oldAvatar !== 'castle/default.png') {
                         const imagesInfo = await Upload.getQiniuImageList(oldAvatar);
                         await Upload.removeQiniuImageList(imagesInfo.items);
@@ -124,7 +124,7 @@ router
                     nickname: ctx.request.body.nickname || '',
                     updatedAt: Date.now(),
                 }
-            }, (err, res) => {
+            }, () => {
                 resolve();
             })
         })
@@ -134,7 +134,7 @@ router
         response(ctx, data);
     })
     // 修改密码
-    .put('/password', async (ctx, next) => {
+    .put('/password', async (ctx) => {
         let user = await User.findOne({
             _id: ctx.userinfo._id
         }).exec();
@@ -159,7 +159,7 @@ router
                     $set: {
                         password: newPwd
                     }
-                }, (err, res) => {
+                }, () => {
                     resolve();
                 })
             })
