@@ -1,15 +1,15 @@
 module.exports = {
-  port: 8001,
-  database: {
-      USER: 'castle',
-      PASSWORD: '3228262',
-      URL: '111.231.249.239:27017/castle'
-  },
-  secret: 'castle',
-  assetsDir: './assets/',
-  qiniu: {
-      accessKey: 'RnF6n3LUR9SgbIaBosNt9eMUzglsxeKP-FByM_SX',
-      secretKey: '-hiwY0OJZPQu2HXY62sGCvW6CegYeMkV885O6dml',
-      scope: 'myserver',
-  },
+    port: 8001, // 启动端口
+    database: { // 数据库
+        USER: '', // 用户名
+        PASSWORD: '', // 用户密码
+        URL: '' // 数据库地址
+    },
+    secret: '', // 加密salt
+    assetsDir: './assets/', // 生成临时图片位置
+    qiniu: { // 七牛云
+        accessKey: '',
+        secretKey: '',
+        scope: '',
+    },
 }
