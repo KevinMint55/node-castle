@@ -6,6 +6,8 @@
 
 相关项目：[vue-willtable](https://github.com/KevinMint55/vue-willtable)
 
+资源服务与[七牛云](https://www.qiniu.com/)对接，采用其CDN加速
+
 ### 技术栈
 
 Nodejs + Koa2 + mongodb + mongoose + socket.io
